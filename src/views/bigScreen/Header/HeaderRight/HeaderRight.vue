@@ -33,7 +33,6 @@ export default {
     //获取时间
     getNowSpeciifcTime() {
       const myDate = new Date();
-      console.log(myDate);
       //获取年月日
       let date = this.getYYMMDD(myDate);
 

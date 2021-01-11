@@ -32,11 +32,11 @@ export default {
     return {
       parkList: [],
       parkLister: [
-        { name: "总停车位", park: 20, total: 200 },
-        { name: "停车场A", park: 20, total: 200 },
-        { name: "停车场B", park: 20, total: 200 },
-        { name: "停车场C", park: 20, total: 200 },
-        { name: "停车场D", park: 20, total: 200 }
+        { name: "总停车位", park: 481, total: 1172 },
+        { name: "唐寅故居停车场", park: 365, total: 1000 },
+        { name: "丝绸博物馆", park: 20, total: 25 },
+        { name: "桃花坞文化产业园", park: 60, total: 87 },
+        { name: "昆剧院", park: 36, total: 60 }
         /* { name: "停车场E", park: 20, total: 200 },
         { name: "停车场F", park: 20, total: 200 },
         { name: "停车场G", park: 20, total: 200 },
@@ -107,7 +107,7 @@ export default {
           }
         },
         {
-          name: "停车场A",
+          name: "唐寅故居停车场",
           symbolSize: 67,
           draggable: true,
           category: 1,
@@ -169,7 +169,7 @@ export default {
           }
         },
         {
-          name: "停车场B",
+          name: "丝绸博物馆",
           symbolSize: 57,
           draggable: true,
           category: 1,
@@ -231,7 +231,7 @@ export default {
           }
         },
         {
-          name: "停车场C",
+          name: "桃花坞文化创意产业园",
           symbolSize: 82,
           draggable: true,
           category: 1,
@@ -293,7 +293,7 @@ export default {
           }
         },
         {
-          name: "停车场D",
+          name: "昆剧院",
           symbolSize: 81,
           draggable: true,
           category: 1,
@@ -473,7 +473,7 @@ export default {
             layout: "force",
             force: {
               repulsion: 1000,
-              edgeLength: 70
+              edgeLength: 50
             },
             //roam: true,
             label: {
@@ -696,7 +696,7 @@ export default {
             //             fontSize: 20,
             fontWeight: "normal",
             formatter: [
-              "{a|停车场B}",
+              `{a|${name}}`,
               // '{a|劣化度}',
               `{b|${park}}  {c|/}  {d|${total}}`
             ].join("\n\n"),
@@ -762,28 +762,28 @@ export default {
             //             fontSize: 20,
             fontWeight: "normal",
             formatter: [
-              "{a|停车场C}",
+               `{a|${name}}`,
               // '{a|劣化度}',
               `{b|${park}}  {c|/}  {d|${total}}`
             ].join("\n\n"),
             rich: {
               a: {
                 color: "#fef1e8",
-                fontSize: this.fontSize(0.175),
+                fontSize: this.fontSize(0.125),
                 //lineHeight: 30,
                 align: "center",
                 fontWeight: "normal"
               },
               b: {
                 color: "#fdf9f1",
-                fontSize: this.fontSize(0.175),
+                fontSize: this.fontSize(0.125),
                 //   lineHeight: 40,
                 align: "center",
                 fontWeight: "normal"
               },
               c: {
                 color: "#fdf9f1",
-                fontSize: this.fontSize(0.175),
+                fontSize: this.fontSize(0.125),
                 //   lineHeight: 40,
                 align: "center"
                 //   fontWeight:'bold',
@@ -827,7 +827,7 @@ export default {
             //             fontSize: 20,
             fontWeight: "normal",
             formatter: [
-              "{a|停车场D}",
+              `{a|${name}}`,
               // '{a|劣化度}',
               `{b|${park}}  {c|/}  {d|${total}}`
             ].join("\n\n"),

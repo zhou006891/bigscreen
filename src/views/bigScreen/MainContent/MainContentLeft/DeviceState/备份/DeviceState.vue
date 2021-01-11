@@ -36,7 +36,7 @@
       class="total-numbers"
       :style="isBlue?'background-color:rgba(10, 100, 124, 0.35)':'background-color: rgba(11, 24, 29, 0.6)'"
     >
-      <span class="total-text" :style="isBlue?'color:white':' color: #a6e4f2;'">187个</span>
+      <span class="total-text" :style="isBlue?'color:white':' color: #a6e4f2;'">5162个</span>
     </div>
   </div>
 </template>
@@ -50,26 +50,26 @@ export default {
       dataList: [
         {
           name: "正常率",
-          value: 99
+          value: 20
         },
         {
           name: "故障率",
-          value: 1
+          value: 40
         }
       ],
       typeList: [
         {
           id: "1",
           name: "卡口",
-          checked: true,
+          checked: false,
           dataList: [
             {
               name: "正常率",
-              value: 99
+              value: 10
             },
             {
               name: "故障率",
-              value: 1
+              value: 90
             }
           ]
         },
@@ -80,26 +80,26 @@ export default {
           dataList: [
             {
               name: "正常率",
-              value: 39
+              value: 20
             },
             {
               name: "故障率",
-              value: 1
+              value: 80
             }
           ]
         },
         {
           id: "3",
           name: "诱导屏",
-          checked: false,
+          checked: true,
           dataList: [
             {
               name: "正常率",
-              value: 59
+              value: 20
             },
             {
               name: "故障率",
-              value: 1
+              value: 40
             }
           ]
         }
@@ -110,6 +110,7 @@ export default {
   mounted() {
     window.addEventListener("resize", this.resize);
     this.initLoad();
+   
   },
   computed: {
     ...mapGetters(["isBlue"]),
@@ -121,18 +122,19 @@ export default {
       return colorList;
     }
   },
-  watch: {
-    isBlue(newValue, oldValue) {
-      if (newValue !== oldValue) {
-        this.resize();
-      }
-    }
+  watch:{
+       isBlue(newValue, oldValue){
+         if(newValue!==oldValue){
+            this.resize()
+         }
+    },
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.resize);
   },
   methods: {
     resize() {
+      
       this.$echarts.init(document.getElementById("circle")).resize();
       this.initLoad();
     },
@@ -147,6 +149,7 @@ export default {
     },
 
     initLoad() {
+       
       let liquid = this.$echarts.init(document.getElementById("circle"));
       let res =
         this.dataList[0].value /
@@ -161,7 +164,7 @@ export default {
               fontSize: this.fontSize(0.1625),
               fontFamily: "Microsoft Yahei",
               fontWeight: "normal",
-              color: this.isBlue ? "#FFFFFF" : "rgba(166, 228, 242, 1)"
+              color:this.isBlue? "#FFFFFF" : "rgba(166, 228, 242, 1)"
             },
             top: "28%",
             left: "center"
@@ -172,7 +175,7 @@ export default {
               fontSize: this.fontSize(0.3),
               fontFamily: "Microsoft Yahei",
               fontWeight: "normal",
-              color: this.isBlue ? "#FFFFFF" : "rgba(166, 228, 242, 1)"
+              color:this.isBlue? "#FFFFFF" : "rgba(166, 228, 242, 1)"
             },
             top: "46%",
             left: "center"
@@ -215,6 +218,7 @@ export default {
           item.checked = false;
         }
       });
+      console.log(this.typeList);
       this.initLoad();
     }
   }

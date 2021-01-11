@@ -4,7 +4,7 @@
 
 
 const state = {
-  isBlue: JSON.parse(window.sessionStorage.getItem('isBlue')) || false
+  isBlue: true
 }
 
 const mutations = {

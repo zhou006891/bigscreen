@@ -5,9 +5,25 @@
 </template>
 
 <script>
+
+
+
 import { mapGetters } from "vuex"
 export default {
   name: "TrafficStatistics",
+  data () {
+    return {
+       sevenData:null
+    }
+  },
+  created(){
+    let temp = []
+    for(let i = -6; i< 1; i++ ){
+        temp.push(this.getDay(i))
+    }
+    this.sevenData = temp
+  }
+  ,
   mounted() {
     window.addEventListener("resize", this.resize);
     this.initLoad();
@@ -26,6 +42,24 @@ export default {
     }
   },
   methods: {
+     getDay(day){
+    var today = new Date();
+    var targetday_milliseconds=today.getTime() + 1000*60*60*24*day;
+    today.setTime(targetday_milliseconds); //注意，这行是关键代码
+    //var tYear = today.getFullYear();
+    var tMonth = today.getMonth();
+    var tDate = today.getDate();
+    tMonth = this.doHandleMonth(tMonth + 1);
+    tDate = this.doHandleMonth(tDate);
+    return tMonth+"-"+tDate;
+},
+doHandleMonth(month){
+    var m = month;
+    if(month.toString().length == 1){
+     m = "0" + month;
+    }
+    return m;
+},
      resize() {
       this.$echarts.init(document.getElementById("triangel")).resize();
       this.initLoad();
@@ -100,7 +134,7 @@ export default {
           bottom: "8%"
         },
         xAxis: {
-          data: ["08-01", "08-02", "08-03", "08-04", "08-05", "08-06", "08-07"],
+          data: this.sevenData,
           axisTick: { show: false },
           axisLine: {
             show: true,
@@ -152,7 +186,7 @@ export default {
                 color:this.isBlue? "rgba(78, 209, 202, 1)":"rgba(209, 122, 60, 1)"
               }
             },
-            data: [200, 220, 280, 490, 190, 290, 100],
+            data: [200, 220, 280, 490, 190, 290, 260],
             z: 15
           },
 
@@ -165,7 +199,7 @@ export default {
             symbol: "path://M150 50 L130 130 L170 130 Z",
             // xAxisIndex: 1,
            
-             data: [130, 160, 12, 59, 12, 100, 200],
+             data: [130, 160, 120, 159, 112, 100, 200],
             itemStyle: {
               normal: {
                 borderWidth: 5,

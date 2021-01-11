@@ -4,24 +4,24 @@
     <div :class="['topBox', isBlue?'topBoxBlue':'topBoxred']">
       <div class="topBoxContent">
         <span class="title">本省车辆</span>
-        <span class="content">888888</span>
+        <span class="content">90164</span>
       </div>
     </div>
     <div :class="['middleLeftBox',isBlue?'middleLeftBoxBlue':'middleLeftBoxRed']">
       <div class="middleLeftBoxContent">
         <span class="title">本地车</span>
-        <span class="content">220</span>
+        <span class="content">79930</span>
       </div>
     </div>
     <div :class="['middleRightBox', isBlue?'middleRightBoxBlue':'middleRightBoxRed']">
       <div class="middleRightBoxContent">
         <span class="title">外省车</span>
-        <span class="content">12145</span>
+        <span class="content">17655</span>
       </div>
     </div>
     <!--    background-image: url("../../../../../assets/static/image/bigscreen/carContructor/zongshu.png"); -->
     <div :class="['bottomBox', isBlue?'bottomBoxBlue':'bottomBoxRed']">
-      <div class="title">总车辆:&nbsp;&nbsp;21, 456</div>
+      <div class="title">总车辆:&nbsp;&nbsp;10, 7819</div>
     </div>
   </div>
 </template>

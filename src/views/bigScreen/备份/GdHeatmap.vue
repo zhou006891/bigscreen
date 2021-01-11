@@ -8,15 +8,7 @@ import road_data_gaode from "../../js/road_data_gaode";
 import { mapGetters } from "vuex";
 export default {
   name: "cc",
-  data() {
-    return {
-      flowData: [],
-      flowDatas: []
-    };
-  },
-  props: {
-    renliuArea: Array
-  },
+
   mounted() {
     this.initLoad();
   },
@@ -32,32 +24,20 @@ export default {
   },
   methods: {
     initLoad() {
-      let that = this;
-
-      //1.获取到带坐标的区域
-      that.filterPoints(this.renliuArea);
-      //2.将坐标转换为高德坐标
-      this.flowDatas = this.flowData.map(item => {
-        return this.bd_decrypt(
-          item.position.lng,
-          item.position.lat,
-          item.groupFlow
-        );
-      });
-
       var map = Loca.create("container", {
         features: ["bg", "road"],
-        center: [120.613919088938, 31.32287023834369],
+        center: [120.60293653167592, 31.319037351818768],
         viewMode: "3D",
-        pitch: 30,
-        rotation: 10,
-        zoom: 16.6,
+        pitch: 50,
+        zoom: 15,
         // mapStyle: "amap://styles/grey" //地图样式 //grey  //darkblue
-        mapStyle: !this.isBlue ? "amap://styles/grey" : "amap://styles/blue" //地图样式 //grey  //darkblue
-        /*     dragEnable: false, // 地图是否可通过鼠标拖拽平移，默认为true
+        mapStyle: !this.isBlue
+          ? "amap://styles/grey"
+          : "amap://styles/darkblue", //地图样式 //grey  //darkblue
+    /*     dragEnable: false, // 地图是否可通过鼠标拖拽平移，默认为true
         keyboardEnable: false, //地图是否可通过键盘控制，默认为true
         doubleClickZoom: false, // 地图是否可通过双击鼠标放大地图，默认为true */
-        //  zoomEnable: false //地图是否可缩放，默认值为true
+      //  zoomEnable: false //地图是否可缩放，默认值为true
       });
       /**
        * 初始化3D热力图
@@ -76,7 +56,8 @@ export default {
           shape: "normal"
         });
 
-        heatmapData = that.flowDatas;
+        console.log(flow_chart_data);
+        heatmapData = flow_chart_data[0];
 
         var list = [];
         var i = -1,
@@ -92,7 +73,7 @@ export default {
         layer.setData(list, {
           lnglat: "coordinate",
           value: "count",
-          max: 200,
+          max: 100,
           min: 0
         });
 
@@ -120,25 +101,34 @@ export default {
       /**
        * 初始化道路网数据
        */
+      function initRoad() {
+        var layer = Loca.visualLayer({
+          container: map,
+          type: "line",
+          shape: "line"
+        });
+
+        // lines = [{"linePath":[["113.52312898184174","22.27357281941615"],["113.5231815784764","22.273561228444535"],["113.52336184754083","22.2733413244094"],["113.52401052709213","22.272515742618356"],["113.52455955924461","22.271600747303673"],["113.52467845581032","22.27133642234186"]]}];
+        let lines = road_data_gaode;
+
+        layer.setData(lines, {
+          lnglat: "linePath"
+        });
+        layer.setOptions({
+          style: {
+            opacity: 0.7,
+            lineWidth: 10,
+            stroke: "#b7eff7"
+          }
+        });
+
+        layer.render();
+      }
+
       initLocaHeatMap();
-    },
 
-    //过滤没有坐标的区域
-    filterPoints(array) {
-      this.flowData = array.filter(item => item.hasOwnProperty("position"));
-    },
-
-    //百度转高德坐标
-    bd_decrypt(bd_lng, bd_lat, count) {
-      var X_PI = (Math.PI * 3000.0) / 180.0;
-      var x = bd_lng - 0.0065;
-      var y = bd_lat - 0.006;
-      var z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * X_PI);
-      var theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * X_PI);
-      var gg_lng = z * Math.cos(theta);
-      var gg_lat = z * Math.sin(theta);
-
-      return { lng: gg_lng, lat: gg_lat, count };
+      initRoad();
+      initLocaHeatMap();
     }
   }
 };
@@ -162,13 +152,13 @@ export default {
   border-radius: 10px;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 10.875rem;
+  transform: translate(-50%, -50%) ;
+  width: 12rem;
+  height: 8rem;
   z-index: 10;
   background: transparent !important;
   opacity: 0.9;
-  box-shadow: 0 0 15px RGBA(112, 152, 165, 1);
+  box-shadow:  0 0 15px  RGBA(112, 152, 165, 1);
 }
 
 .amap-controlbar {

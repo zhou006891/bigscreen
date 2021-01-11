@@ -1,14 +1,37 @@
 <template>
   <div :class="['illegalStoppingPoints', isBlue ? 'blueBorderBgc' : 'redBorderBgc']">
     <div class="countTotal">{{currentFlowStatus? '流量点位数量统计':'违停点位数量统计'}}</div>
-     <div class="flowPoint" @click="handleStatus">{{currentFlowStatus? '违停点位':'流量点位'}}</div>
-    <vue-seamless-scroll :class-option="classOption1" :data="tempArr" class="seamless-warp1">
-      <div class="illega-content"> 
-        <div class="item" v-for="(item, index) in tempArr" :key="index">
-          <span class="title" :style="isBlue?'color:#FFFFFF':''">{{item.title}}</span>
+    <div class="flowPoint" @click="handleStatus">{{currentFlowStatus? '违停点位':'流量点位'}}</div>
+
+    <vue-seamless-scroll
+      :class-option="classOption1"
+      :data="illegalArray"
+      class="seamless-warp1"
+      v-if="!currentFlowStatus"
+    >
+      <div class="illega-content">
+        <div class="item" v-for="(item, index) in illegalArray" :key="index">
+          <span class="title" :style="isBlue?'color:#FFFFFF':''">{{item.deviceLocation}}</span>
           <span class="contenter">
             <span :class="['bar', isBlue? 'blueBuff' : 'redBuff']" :style="item.width"></span>
-            <span class="number" :style="isBlue?'color:#FFFFFF':''">{{item.number}}</span>
+            <span class="number" :style="isBlue?'color:#FFFFFF':''">{{item.illegalNum}}</span>
+          </span>
+        </div>
+      </div>
+    </vue-seamless-scroll>
+
+    <vue-seamless-scroll
+      :class-option="classOption1"
+      :data="flowPoint"
+      class="seamless-warp1"
+      v-else
+    >
+      <div class="illega-content">
+        <div class="item" v-for="(item, index) in flowPoint" :key="index">
+          <span class="title" :style="isBlue?'color:#FFFFFF':''">{{item.groupName}}</span>
+          <span class="contenter">
+            <span :class="['bar', isBlue? 'blueBuff' : 'redBuff']" :style="item.width"></span>
+            <span class="number" :style="isBlue?'color:#FFFFFF':''">{{item.groupFlow}}</span>
           </span>
         </div>
       </div>
@@ -18,47 +41,53 @@
 
 <script>
 import { mapGetters } from "vuex";
+/* import {
+  getIllegalCount,
+  getBigScreenFlow
+} from "@/api/publicSafety/hkCapture"; */
 export default {
   data() {
     return {
-
+      showInformatioan: -1,
       currentFlowStatus: false,
-      tempArr: [
-        {
-          title: "点位1",
-          number: 999
-        },
-        {
-          title: "点位2",
-          number: 1210
-        },
-        {
-          title: "点位3",
-          number: 658
-        },
-        {
-          title: "点位4",
-          number: 1124
-        }, {
-          title: "点位5",
-          number: 1124
-        },
-         {
-          title: "点位6",
-          number: 1124
-        }
-      ]
+      illegalArray: [],
+      flowPoint: [],
+      timer:null,
+      illArray:[
+        {deviceLocation: "廖家巷008路灯北向南违停", illegalNum: 143},
+        {deviceLocation: "唐寅故居东南门012号路灯北违停", illegalNum: 37},
+        {deviceLocation: "唐寅故居南东门对面违停", illegalNum: 85},
+        {deviceLocation: "廖家巷017号路灯北向南违停", illegalNum: 241},
+        {deviceLocation: "桃花坞大街004号路灯西违停", illegalNum: 2053},
+        {deviceLocation: "廖家巷004路灯北东向南违停", illegalNum: 226},
+        {deviceLocation: "唐寅故居南西门对面违停", illegalNum: 46},
+        {deviceLocation: "校场桥路-文化中心停车场出口违停", illegalNum: 177}
+      ],
+        humanFlowList:[ 
+        {groupName: "朴园人员统计", groupFlow: "110", position: {lng: "120.622047", lat: "31.330769"}},
+        {groupName: "唐寅故居文化区人员统计", groupFlow: "213", position: {lng: "120.621603", lat: "31.328849"}},
+        {groupName: "唐寅祠人员统计", groupFlow: "392", position: {lng: "120.618610", lat: "31.328592"}},
+        {groupName: "廖家巷人员统计", groupFlow: "215", position: {lng: "120.6177132963202", lat: "31.33185852243688"}},
+        {groupName: "唐寅", groupFlow: "505", position: { lng: "120.620410", lat: "31.327837" }},
+        {groupName: "全局", groupFlow: "191", position: { lng: "120.618897", lat: "31.327607" }},
+        {groupName: "前新街", groupFlow: "309", position: { lng: "120.6177132963202", lat: "31.33185852243668" }},
+        {groupName: "景区人脸", groupFlow: "200", position: { lng: "120.621210", lat: "31.330042" }},
+        {groupFlow: "189", groupName: "桃花坞大街人员统计",position: {lng: "120.6204484638521", lat: "31.32606842689954"}}
+        ],
     };
   },
   created() {
-    this.initLoad();
+    //违停点位数据
+    this.illegalStop();
+    //流量点位数据
+     this.flowPoints();
   },
   computed: {
     ...mapGetters(["isBlue"]),
     classOption1: function() {
       return {
         step: 0.5, //步长 越大滚动速度越快
-        limitMoveNum: 5, //启动无缝滚动最小数据量 this.dataList.length
+        limitMoveNum: 2, //启动无缝滚动最小数据量 this.dataList.length
         hoverStop: true, //是否启用鼠标hover控制
         direction: 1, //1 往上 0 往下
         openWatch: true, //开启data实时监听
@@ -67,35 +96,88 @@ export default {
       };
     }
   },
-  watch:{
-    isBlue(newValue, oldValue){
-       if(newValue !== oldValue){
-          this.initLoad()
-       }
-    }
-  },
+  watch: {},
   methods: {
+    illegalStop() {
+       this.illegalArray = this.illArray
+       this.initLoad();
+     /*  getIllegalCount().then(res => {
+        this.illegalArray = res.item;
+        this.initLoad();
+      }); */
+    },
+    flowPoints() {
+        this.flowPoint = this.humanFlowList;
+        this.FlowinitLoad();
+  /*     getBigScreenFlow()
+        .then(res => {
+          this.flowPoint = res.item.humanFlowList;
+          this.FlowinitLoad();
+        })
+        .catch(err => {
+          this.flowPoint = [
+            { groupName: "唐寅祠人员统计", groupFlow: "300" },
+            { groupName: "廖家巷人员统计", groupFlow: "17" },
+            { groupName: "朴园人员统计", groupFlow: "170" },
+            { groupName: "唐寅", groupFlow: "0" },
+            { groupName: "前新街", groupFlow: "0" },
+            { groupName: "桃花坞大街人员统计", groupFlow: "210" },
+            { groupName: "全局", groupFlow: "0" },
+          ];
+          this.FlowinitLoad();
+        }); */
+    },
     initLoad() {
       let temp = [];
-      this.tempArr.map(item => {
-        temp.push(item.number);
+      this.illegalArray.map(item => {
+        temp.push(item.illegalNum);
       });
       //找到最大值
       let maxNumber = Math.max(...temp);
 
       //以最大值为分母，获取百分比
-      this.tempArr = this.tempArr.map(item => {
-        let res = item.number / maxNumber;
+      this.illegalArray = this.illegalArray.map(item => {
+        let res = item.illegalNum / maxNumber;
         res = (res * 100).toFixed(0);
         let obj = { width: { width: res * 0.75 + "%" } };
         return { ...item, ...obj };
       });
-      console.log(this.tempArr);
+    },
+    FlowinitLoad() {
+      let temp = [];
+      this.flowPoint.map(item => {
+        temp.push(+item.groupFlow);
+      });
+      //找到最大值
+      let maxNumber = Math.max(...temp);
+
+      //以最大值为分母，获取百分比
+      this.flowPoint = this.flowPoint.map(item => {
+        let res = +item.groupFlow / maxNumber;
+        res = (res * 100).toFixed(0);
+        let obj = { width: { width: res * 0.75 + "%" } };
+        return { ...item, ...obj };
+      });
     },
     handleStatus() {
       this.currentFlowStatus = !this.currentFlowStatus;
-      this.$store.dispatch("bigscreen/changecolor");
+      if (this.currentFlowStatus) {
+        this.flowPoints();
+      } else {
+        this.illegalStop();
+      }
+     /*  if (this.currentFlowStatus) this.$store.dispatch("bigscreen/changecolor"); */
+    },
+    initStatus() {
+      if (this.currentFlowStatus) {
+        this.flowPoints();
+      } else {
+        this.illegalStop();
+      }
     }
+  },
+  beforeDestroy(){
+     clearInterval(this.timer)
   }
 };
 </script>
@@ -134,30 +216,45 @@ export default {
 .redBorderBgc {
   background-image: url("../../../../../assets/static/image/bigscreen/RedImage/biankuang1.png");
 }
+
 .illega-content {
   width: 100%;
- /*  height: 2.5125rem; */
- /*  margin-bottom: 0.475rem !important; */
   .item {
     width: 100%;
-    height: 0.225rem;
     margin-bottom: 0.475rem;
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-direction: column;
     cursor: pointer;
+    z-index: 10;
     > span {
+      line-height: 0.25rem;
       font-size: 0.15rem;
       font-weight: 400;
       color: #a6e4f2;
-      display: inline-block;
+      display: block;
+      /*  width: 50px; */
+      /* text-overflow: -o-ellipsis-lastline; */
+      /*  overflow: hidden; */
+      /*  text-overflow: ellipsis;
+      display: -webkit-box; */
+      /*  -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; */
     }
     .title {
-      flex-shrink: 0;
+      /*  flex-shrink: 0; */
+      width: 80%;
+      box-sizing: border-box;
       margin-right: 0.225rem;
+      padding-left: 0.12rem;
+      /* text-align: center; */
     }
     .contenter {
-      flex: 1 !important;
-      height: 100%;
+      margin-top: 0.125rem;
+      width: 80%;
+      /*  flex: 1 !important; */
+      height: 0.225rem;
       border: 1px solid #57767e;
       display: flex;
       align-items: center;
@@ -187,7 +284,7 @@ export default {
   display: inline-block;
   position: absolute;
   right: 0.48rem;
- 
+
   padding: 0.025rem 0.1125rem 0.025rem 0.1125rem;
   /* box-sizing: border-box; */
   background-color: rgba(135, 185, 197, 0.2);
@@ -208,13 +305,14 @@ export default {
   left: -0.12rem;
 }
 
-.seamless-warp1{
+.seamless-warp1 {
+  /*  border: 1px solid red; */
   overflow: hidden;
   position: relative;
   left: 0.375rem;
   top: 0.62rem;
   width: 81.5%;
   height: 2.5125rem;
- /*  border: 1px solid red; */
+  /*  border: 1px solid red; */
 }
 </style>

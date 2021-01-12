@@ -21,13 +21,13 @@ export default {
     return {
       listData: [
         {
-          title: "1号预案已启动"
+          title: "苏州昆剧院人流量较大"
         },
         {
-          title: "2号预案已启动"
+          title: "中街路车流量较大"
         },
         {
-          title: "3号预案已启动"
+          title: "桃花坞大街车流量较大"
         }
       ]
     };
